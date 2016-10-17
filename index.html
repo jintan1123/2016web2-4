@@ -2,18 +2,85 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>はじめてのReact</title>
+    <title>ローカルチャット</title>
   </head>
   <body>
-    <div id="container">
+    <ons-page>
+      <ons-toolbar>
+        <div class="center">ローカルチャット</div>
+      </ons-toolbar>
+      <div style="text-align: center;">
+        <p>コメントを入力してください</p>
+        <div id="container"> <!-- この内容が置き換えられる --> </div>
+      </div>
+    </ons-page>
+
+    <link rel="stylesheet" href="css/onsenui.css">
+    <link rel="stylesheet" href="css/onsen-css-components.css">
+    
     <script src="https://unpkg.com/react@15.3.2/dist/react.min.js"></script>
     <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.min.js"></script>
+    <script src="js/onsenui.min.js"></script>
+    <script src="js/react-onsenui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.38/browser.min.js"></script>
-    <script typr="text/babel">
-      ReactDOM.render(
-        <h1>はじめてのReact</h1>,
-        document.getElementById('container')
-      );
+    <script type="text/babel">
+      var CommentList = React.createClass({
+          render: function() {
+              var comments = this.props.comments.map(function(comment, index) {
+                  return <ons-list-item key={index}>{comment}</ons-list-item>;
+              });
+              return (
+                  <ons-list>{comments}</ons-list>
+              );
+          }
+      });
+
+      var CommentApp = React.createClass({
+          getInitialState: function() {
+              return {
+                  comments: [],
+                  inputValue: ''
+              }
+          },
+          handleSubmit: function(e) {
+              e.preventDefault();
+              var comment = this.state.inputValue;
+              this.setState({
+                  comments: this.state.comments.concat(comment),
+                  inputValue: ''
+              })
+          },
+          handleChange: function(e) {
+              this.setState({
+                  inputValue: e.target.value
+              });
+          },
+          render: function() {
+              return (
+                  <div>
+                    <form
+                      className="comment-form"
+                      onSubmit={this.handleSubmit} >
+                      <ons-row align = "center">
+                        <ons-col width="60%" align = "right">
+                          <input class="text-input"
+                            type="text"
+                            value={this.state.inputValue}
+                            onChange={this.handleChange} />
+                        </ons-col>
+                        <ons-col width="5%" align = "right">
+                        </ons-col>
+                        <ons-col align = "left">
+                          <ons-button type="submit" onClick={this.handleSubmit}>add</ons-button>
+                        </ons-col>
+                      </ons-row>
+　　                </form>
+                    <CommentList comments={this.state.comments} />
+                  </div>
+              );
+          }
+      });
+      ReactDOM.render(<CommentApp />, document.getElementById('container'));
     </script>
   </body>
 </html>
